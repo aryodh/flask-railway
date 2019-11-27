@@ -1,0 +1,22 @@
+body {
+    background-image: url('/static/image/stasiun.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-attachment: fixed;
+    overflow-x: hidden;
+}
+
+.main-row {
+    padding-top: 10vh;
+    padding-left: 5vw;
+    padding-right: 5vw;
+}
+
+.content {
+    text-align: center;
+    background-color: rgba(255, 255, 255, 0.9);
+    min-height: 70vh;
+    border-radius: 15px;
+    padding: 5%;
+}
