@@ -1,29 +1,59 @@
-from flask import Flask, render_template
-from celery import Celery
-import celeryApp
+from flask import Flask, render_template, redirect, jsonify
 import os
+import time
+from multiprocessing import Process
+import coba
+
+val = [0]
+
+thrd = []
 
 app = Flask(__name__)
-
-app.config.update(
-    CELERY_BROKER_URL='redis://localhost:6379',
-    CELERY_RESULT_BACKEND='redis://localhost:6379'
-)
-
-celeryApps = celeryApp.make_celery(app)
 
 @app.route('/')
 def control():
 	return render_template('index.html')
 
+def kill():
+	while thrd:
+		thrd.pop(0).terminate()
 
-@celeryApps.task()
-def railway():
-	print("kepanggil")
+@app.route('/open')
+def open():
+	kill()
+	print("open")
+	time.sleep(5)
+	add_thrd()
+	return jsonify(
+		data="success"
+	)
+
+
+@app.route('/close')
+def close():
+	kill()
+	print("close")
+	time.sleep(5)
+	add_thrd()
+	return jsonify(
+		data="success"
+	)
+
+def auto():
+	print("auto")
+	while True:
+		coba.main()
+
+def add_thrd():
+	thrd.append(Process(target=auto))
+	thrd[0].start()
 
 if __name__ == '__main__':
 	print("masuk")
-	result = railway.delay()
+	add_thrd()
+
+	# result = railway()
+	# thrd.append(threading.Thread(target=railway))
+	# thrd[0].start()
 	print("masuk1")
-	print("masuk2")
-	app.run(host='0.0.0.0', port=9999, threaded=True, debug=True)
+	app.run(host='0.0.0.0', port=9999, threaded=True, debug=True, use_reloader=False)
