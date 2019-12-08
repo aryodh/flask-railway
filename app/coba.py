@@ -7,7 +7,6 @@ LedPin = 20
 ServoPin = 4 
 IRPin = 17
 #IR2Pin = 
-print("sadasdasdasd")
 GPIO.setwarnings(False) # Ignore warning for now
 GPIO.setmode(GPIO.BCM) # Use physical pin numbering
 GPIO.setup(LedPin, GPIO.OUT, initial=GPIO.LOW)
@@ -16,9 +15,12 @@ GPIO.setup(IRPin, GPIO.IN)
 #GPIO.setup(IR2Pin, GPIO.IN)
 
 p = GPIO.PWM(ServoPin, 50) # GPIO 17 for PWM with 50Hz
-p.start(3.5) # Initialization
+#p.start(3.5) # Initialization
+act = None
 
 def main():
+  act = p.start(3.5)
+  print("zxc")  
   gateIsClose = False
   while True:
   # dapet 1 dari infrared
@@ -47,11 +49,13 @@ def closeGate(gateIsClose):
     return gateIsClose
 
   try:
+    if act == None:
+      p.start(3.5)
     p.ChangeDutyCycle(6)
     time.sleep(0.5)
     p.ChangeDutyCycle(8.5)
     print("bisa nutup")
-
+    
   except KeyboardInterrupt:
     p.stop()
     GPIO.cleanup()
@@ -64,10 +68,13 @@ def openGate(gateIsClose):
     return gateIsClose
 
   try:
+    if act == None:
+      p.start(3.5) 
+    p.start(3.5)
     p.ChangeDutyCycle(6)
     time.sleep(0.5)
     p.ChangeDutyCycle(3.5)
-
+    
   except KeyboardInterrupt:
     p.stop()
     GPIO.cleanup()
@@ -77,3 +84,4 @@ def openGate(gateIsClose):
 
 if __name__ == '__main__':
   main()
+  

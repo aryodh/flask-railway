@@ -47,15 +47,12 @@ def auto():
 	coba.main()
 
 def add_thrd():
+	print("sesuatu")
 	thrd.append(Process(target=auto))
 	thrd[0].start()
 
 if __name__ == '__main__':
-	print("masuk")
 	add_thrd()
-
-	# result = railway()
-	# thrd.append(threading.Thread(target=railway))
-	# thrd[0].start()
+	print(thrd)
 	print("masuk1")
 	app.run(host='0.0.0.0', port=9999, threaded=True, debug=True, use_reloader=False)
