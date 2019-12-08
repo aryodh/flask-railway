@@ -1,0 +1,107 @@
+import RPi.GPIO as GPIO # Import Raspberry Pi GPIO library
+import subprocess
+import time # Import the sleep function from the time module
+
+LedPinKereta = 20 #kuning
+LedPinOrang = 21 #merah
+ServoPin = 4 
+IRPin = 17 #yg ijo biru ungu
+IR2Pin = 24 #yg putih item abu2
+
+GPIO.setwarnings(False) # Ignore warning for now
+GPIO.setmode(GPIO.BCM) # Use physical pin numbering
+GPIO.setup(LedPinKereta, GPIO.OUT, initial=GPIO.LOW)
+GPIO.setup(LedPinOrang, GPIO.OUT, initial=GPIO.LOW)
+GPIO.setup(ServoPin,  GPIO.OUT)
+GPIO.setup(IRPin, GPIO.IN)
+GPIO.setup(IR2Pin, GPIO.IN)
+
+p = GPIO.PWM(ServoPin, 50) # GPIO 17 for PWM with 50Hz
+p.start(3.5) # Initialization
+
+def main():
+  gateIsClose = 0
+  while True:
+  # dapet 1 dari infrared
+    if (GPIO.input(IRPin) == False and (gateIsClose == 0 or gateIsClose == 2)): #ada kereta
+      if GPIO.input(IR2Pin) == True: #kalo nggk ada orang
+
+        if (gateIsClose == 0): #belom ketutup
+          onLEDKereta()
+          gateIsClose = closeGate(0)
+        elif (gateIsClose == 2): #kalo udah ketutup dikit
+          onLEDKereta()
+          gateIsClose = closeGate(2)
+
+      else: # kalo ada orang	
+        onLEDOrang()
+        gateIsClose = closeGatePelan()
+    
+    elif(GPIO.input(IRPin) == True and (gateIsClose == 1 or gateIsClose == 2)): #nggak ada kereta
+      offLED()
+      gateIsClose = openGate()
+      
+def onLEDKereta():
+  #subprocess.call(['./onLED.sh'])
+  GPIO.output(LedPinKereta, GPIO.HIGH)
+
+def onLEDOrang():
+  GPIO.output(LedPinOrang, GPIO.HIGH)
+
+def offLED():
+  #subprocess.call(['./offLED.sh'])
+  GPIO.output(LedPinKereta, GPIO.LOW)
+  GPIO.output(LedPinOrang, GPIO.LOW)
+
+def closeGate(n):
+  try:
+    if(n == 0):
+      p.ChangeDutyCycle(5)
+      time.sleep(0.5)
+      p.ChangeDutyCycle(6.3)
+      time.sleep(0.5)
+      p.ChangeDutyCycle(8.5)
+
+    if (n == 2):
+      p.ChangeDutyCycle(7.5)
+      time.sleep(0.5)
+      p.ChangeDutyCycle(8.5)
+
+  except KeyboardInterrupt:
+    p.stop()
+    GPIO.cleanup()
+
+  return 1
+
+def closeGatePelan():
+  try:
+    p.ChangeDutyCycle(4.5)
+    time.sleep(1)
+    p.ChangeDutyCycle(5)
+    time.sleep(1)
+    p.ChangeDutyCycle(5.5)
+    time.sleep(1)
+    p.ChangeDutyCycle(6)
+    time.sleep(1)
+    p.ChangeDutyCycle(6.5)
+
+  except KeyboardInterrupt:
+    p.stop()
+    GPIO.cleanup()
+
+  return 2
+
+def openGate():
+  try:
+    p.ChangeDutyCycle(6)
+    time.sleep(0.5)
+    p.ChangeDutyCycle(3.5)
+
+  except KeyboardInterrupt:
+    p.stop()
+    GPIO.cleanup()
+
+  return 0
+
+if __name__ == '__main__':
+  main()

@@ -2,11 +2,12 @@ import RPi.GPIO as GPIO # Import Raspberry Pi GPIO library
 import subprocess
 import time # Import the sleep function from the time module
 
-LedPin = 26 
-ServoPin = 4 
-IRPin = 24
-#IR2Pin = 
 
+LedPin = 20 
+ServoPin = 4 
+IRPin = 17
+#IR2Pin = 
+print("sadasdasdasd")
 GPIO.setwarnings(False) # Ignore warning for now
 GPIO.setmode(GPIO.BCM) # Use physical pin numbering
 GPIO.setup(LedPin, GPIO.OUT, initial=GPIO.LOW)
@@ -49,6 +50,7 @@ def closeGate(gateIsClose):
     p.ChangeDutyCycle(6)
     time.sleep(0.5)
     p.ChangeDutyCycle(8.5)
+    print("bisa nutup")
 
   except KeyboardInterrupt:
     p.stop()

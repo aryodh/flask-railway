@@ -22,7 +22,8 @@ def kill():
 def open():
 	kill()
 	print("open")
-	time.sleep(5)
+	gate = coba.openGate(True)
+	coba.offLED()
 	add_thrd()
 	return jsonify(
 		data="success"
@@ -33,7 +34,9 @@ def open():
 def close():
 	kill()
 	print("close")
-	time.sleep(5)
+	coba.onLED()
+	gate = coba.closeGate(False)
+	time.sleep(2)
 	add_thrd()
 	return jsonify(
 		data="success"
@@ -41,8 +44,7 @@ def close():
 
 def auto():
 	print("auto")
-	while True:
-		coba.main()
+	coba.main()
 
 def add_thrd():
 	thrd.append(Process(target=auto))
